@@ -20,7 +20,7 @@ const checkBrandName = [
 
 const updateBrand = [
     check("id").isMongoId().withMessage("Invalid Brand Id Format"),
-    check("name").isString()
+    check("name").optional().isString()
         .isLength({min: 0}).withMessage("Name Length is too short")
         .isLength({max: 32}).withMessage("Name Lenght is too small").custom((value, {req}) => {
         req.body.slug = slugify(value)

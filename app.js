@@ -1,13 +1,12 @@
-/* eslint-disable import/no-extraneous-dependencies */
-// eslint-disable-next-line node/no-unpublished-require
 const express = require('express');
 const dotenv = require('dotenv');
 const morgan = require('morgan');
 
-dotenv.config({path: "config/config.env"})
+dotenv.config({ path: "config/config.env" })
 const app = express()
 
 // require files in your application 
+const path = require('path')
 const mongoConnection = require('./config/database_config');
 const ApiError = require('./utils/api_error');
 const globalError = require('./middlewares/globalError');
@@ -24,8 +23,8 @@ mongoConnection()
 
 // middleware 
 app.use(express.json())
-app.use(express.urlencoded({extended: true}))
-
+app.use(express.urlencoded({ extended: true }))
+app.use(express.static(path.join(__dirname, 'upload')))
 
 if (process.env.NODE_ENV === "development") {
     app.use(morgan('dev'))

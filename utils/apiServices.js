@@ -6,10 +6,11 @@ const ApiFeatures = require("./apiFeatures");
 
 const deleteService = (modelDoc) => asynchandler(async (req, res, next) => {
 
-    const {id} = req.params
-    const item = await modelDoc.findByIdAndDelete({_id: id})
+    const { id } = req.params
+    const item = await modelDoc.findByIdAndDelete({ _id: id })
+    // const item = await modelDoc.deleteMany()
     if (item) {
-        return res.status(200).json({message: "category deleted success", item})
+        return res.status(200).json({ message: "Deleted success", item })
     }
     next(new ApiError(`can't find the item please change ${id}`, 404))
 })
@@ -22,9 +23,9 @@ const deleteService = (modelDoc) => asynchandler(async (req, res, next) => {
 
 const updateService = (modelDoc) => asynchandler(async (req, res, next) => {
 
-    const item = await modelDoc.findByIdAndUpdate(req.params.id, req.body, {new: true})
+    const item = await modelDoc.findByIdAndUpdate(req.params.id, req.body, { new: true })
     if (item) {
-        return res.status(200).json({"status": "success", "document": item})
+        return res.status(200).json({ "status": "success", "document": item })
     }
     next(new ApiError(`can't find the item please change ${req.params.id}`, 404))
 })
@@ -32,7 +33,7 @@ const updateService = (modelDoc) => asynchandler(async (req, res, next) => {
 const getAllDocumentsService = (modelDoc, collectionName) => asynchandler(async (req, res, next) => {
     let subCategoryId = {}
 
-    if (req.params.categoryId) subCategoryId = {category: req.params.categoryId}
+    if (req.params.categoryId) subCategoryId = { category: req.params.categoryId }
 
     req.filterCategoryId = subCategoryId
 
@@ -45,7 +46,7 @@ const getAllDocumentsService = (modelDoc, collectionName) => asynchandler(async 
         .fields()
         .sorting()
 
-    const {buildQuery, paginationResult} = apiFeaturesObj
+    const { buildQuery, paginationResult } = apiFeaturesObj
 
     const data = await buildQuery.exec()
 
@@ -57,22 +58,20 @@ const getAllDocumentsService = (modelDoc, collectionName) => asynchandler(async 
     })
 })
 
-const createService = (modelDoc) => asynchandler(async (req, res, next) => {
+const createService = (modelDoc) =>
+    asynchandler(async (req, res) => {
+        const data = await modelDoc.create(req.body)
+        res.status(200).json({
+            "Status": "Success",
+            "result": data
+        })
 
-    console.log(`apiServices message req.body -> ${req.body}`)
-
-    const data = await modelDoc.create(req.body)
-    console.log(`apiServices message data -> ${data} `)
-    res.status(200).json({
-        "Status": "Success",
-        "result": data
     })
 
-})
 
 const getSpecificDocumentService = (modelDoc) => asynchandler(async (req, res, next) => {
 
-    const {id} = req.params
+    const { id } = req.params
     const item = await modelDoc.findById(id)
     // .populate({ path: 'category', select: 'name -_id' })
 
@@ -82,7 +81,7 @@ const getSpecificDocumentService = (modelDoc) => asynchandler(async (req, res, n
         // res.status(404).json({ message: "Category Not Found" })
         return next(new ApiError("Item Not Found", 404))
     }
-    res.status(200).json({message: "success", data: item})
+    res.status(200).json({ message: "success", data: item })
 
 })
 

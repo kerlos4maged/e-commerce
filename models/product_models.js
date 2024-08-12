@@ -1,3 +1,4 @@
+/* eslint-disable array-callback-return */
 const mongoose = require('mongoose');
 
 const schema = new mongoose.Schema(
@@ -75,17 +76,39 @@ const schema = new mongoose.Schema(
             default: 0,
         }
     },
-    {timestamps: true},
+    { timestamps: true },
 )
 
 schema.pre(/^find/, function (next) {
-    this.populate({path: "category model", select: '-_id name'})
+    this.populate({ path: "category model", select: '-_id name' })
     next()
 })
 
 schema.pre(/^find/, function (next) {
-    this.populate({path: "SubCategory", select: '-_id name'})
+    this.populate({ path: "SubCategory", select: '-_id name' })
     next()
 })
+
+const docItemMiddleware = (doc) => {
+    if (doc.imageCover) {
+        const imageUrl = `${process.env.BASE_URL}/prodact/${doc.category}/${doc.imageCover}`
+        doc.imageCover = imageUrl
+    }
+
+    if (doc.images) {
+        const imagesList = []
+        doc.images.forEach((image) => {
+            console.log(`Image from product model -> ${image}`)
+            const imageUrl = `${process.env.BASE_URL}/prodact/${doc.category}/${image}`
+            imagesList.push(imageUrl)
+        })
+        console.log(`All of Images from product model -> ${imagesList}`)
+        doc.images = imagesList
+    }
+}
+
+schema.post('init', (data) => docItemMiddleware(data))
+
+schema.post('save', (data) => docItemMiddleware(data))
 
 module.exports = mongoose.model("productModel", schema)

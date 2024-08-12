@@ -1,11 +1,84 @@
-const slugify = require("slugify")
-const asyncHandler = require("express-async-handler")
-const productModel = require("../models/product_models")
-const apiError = require("../utils/api_error")
-const apiFeatures = require('../utils/apiFeatures')
-const apiServices = require('../utils/apiServices')
+const { uuid } = require('uuidv4');
 
-const getAllProducts = apiServices.getAllDocumentsService(productModel,"Product")
+const sharp = require('sharp');
+
+const expressAsyncHandler = require('express-async-handler');
+
+const fs = require('fs')
+
+const { uploadMixImage } = require('../middlewares/uploadImage');
+
+const productModel = require("../models/product_models")
+
+const apiServices = require('../utils/apiServices');
+
+
+const uploadProductImages = uploadMixImage([
+    {
+        name: 'imageCover',
+        maxCount: 1
+    },
+    {
+        name: 'images',
+        maxCount: 5
+    },
+])
+
+const resizeBrandImage = expressAsyncHandler(async (req, res, next) => {
+    try {
+        const id = req.body.category
+        const folderName = `upload/prodact/${id}`;
+        // Check if the directory exists
+        if (!fs.existsSync(folderName)) {
+            fs.mkdirSync(folderName, { recursive: true });
+            console.log(`Directory created: ${folderName} -> ${id}`);
+        } else {
+            // const parts = folderName.split(' ');
+            // const lastPart = parseInt(parts[1].match(/\d+/)[0], 10) + 1;
+            // console.log(`this is last part -> ${lastPart}`);
+            // folderName = `upload/prodact/${req.body.title}-${lastPart}`
+            // fs.mkdirSync(folderName, { recursive: true });  // Recreate the directory if it already exists to avoid overwriting images
+            console.log(`Directory already exists: ${folderName}`);
+        }
+
+        console.log(`Folder name: ${folderName}`);
+
+        // Processing the cover image
+        if (req.files.imageCover) {
+            const fileName = `prodact-${uuid()}-${Date.now()}.jpeg`;
+            await sharp(req.files.imageCover[0].buffer)
+                .resize(2000, 1333)
+                .toFormat("jpeg")
+                .jpeg({ quality: 90 })
+                .toFile(`${folderName}/${fileName}`);
+
+            req.body.imageCover = fileName;  // Save image name in database
+        }
+
+        // Processing additional images
+        if (req.files.images) {
+            req.body.images = [];
+            await Promise.all(req.files.images.map(async (element, index) => {
+                const fileName = `prodact-${uuid()}-${Date.now()}-${index + 1}.jpeg`;
+
+                await sharp(element.buffer)
+                    .resize(1500, 1000)
+                    .toFormat("jpeg")
+                    .jpeg({ quality: 90 })
+                    .toFile(`${folderName}/${fileName}`);
+
+                req.body.images.push(fileName);  // Save image name in database
+            }));
+        }
+
+    } catch (error) {
+        console.log(`Error occurred while processing: ${error}`);
+    }
+
+    next()
+})
+
+const getAllProducts = apiServices.getAllDocumentsService(productModel, "Product")
 
 const getProductById = apiServices.getSpecificDocumentService(productModel)
 
@@ -30,5 +103,11 @@ const deleteProduct = apiServices.deleteService(productModel)
 // });
 
 module.exports = {
-    getAllProducts, getProductById, createProduct, updateProduct, deleteProduct,
+    getAllProducts,
+    getProductById,
+    createProduct,
+    updateProduct,
+    deleteProduct,
+    uploadProductImages,
+    resizeBrandImage
 }

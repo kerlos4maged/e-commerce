@@ -44,7 +44,7 @@ module.exports.getAllSubCategoryValidator = [
 
 module.exports.updateSubCategoryValidator = [
     check("id").isMongoId().withMessage("Invalid SubCategory Id Format"),
-    check("name").isString().custom((value, {req}) => {
+    check("name").optional().isString().custom((value, {req}) => {
         req.body.slug = slugify(value)
         return true
     })

@@ -6,17 +6,33 @@ const {
     getProductById,
     createProduct,
     updateProduct,
-    deleteProduct
+    deleteProduct,
+    uploadProductImages,
+    resizeBrandImage,
 } = require('../controllers/product_controller')
 
 const {
     createProductValidator,
-    checkIdValidator
+    checkIdValidator,
+    updateProductValidator
+
 } = require('../utils/validator/productRulesValidator')
 
 const router = express.Router()
 
-router.route('/').get(getAllProducts).post(createProductValidator, createProduct)
-router.route('/:id').get(checkIdValidator, getProductById).delete(checkIdValidator, deleteProduct).put(checkIdValidator, updateProduct)
+router.route('/').get(getAllProducts).post(
+    uploadProductImages,
+    resizeBrandImage,
+    createProductValidator,
+    createProduct)
+
+router.route('/:id')
+    .get(checkIdValidator, getProductById)
+    .delete(checkIdValidator, deleteProduct)
+    .put(
+        uploadProductImages,
+        resizeBrandImage,
+        updateProductValidator,
+        updateProduct)
 
 module.exports = router
