@@ -13,7 +13,7 @@ const {
 // mergerParams this is used if any another route send params data
 
 // ex: We need to access CategoryId from Category route -> Nested Route
-const router = express.Router({mergeParams:true})
+const router = express.Router({ mergeParams: true })
 
 const {
     createSubCategoryValidator,
@@ -22,14 +22,28 @@ const {
     deleteSubCategoriesValidator,
 } = require('../utils/validator/subCategoryRulesValidator');
 
+const { protected, allowedTo } = require('../controllers/authentication_controller')
 
 router.route('/')
-    .post(checkCategoryId, createSubCategoryValidator, createSubCategoryController)
-    .get(setIdForGetSubCategory,getSubCategoriesController)
+    .post(
+        protected,
+        allowedTo('admin'),
+        checkCategoryId,
+        createSubCategoryValidator,
+        createSubCategoryController)
+    .get(setIdForGetSubCategory, getSubCategoriesController)
 
 router.route('/:id')
     .get(getSubCategoryByIdValidator, getSubCategoriesByIdController)
-    .delete(deleteSubCategoriesValidator, deleteSubCategoryController)
-    .put(updateSubCategoryValidator, updateSubCategoryController)
+    .delete(
+        protected,
+        allowedTo('admin'),
+        deleteSubCategoriesValidator,
+        deleteSubCategoryController)
+    .put(
+        protected,
+        allowedTo('admin'),
+        updateSubCategoryValidator,
+        updateSubCategoryController)
 
 module.exports = router;

@@ -22,8 +22,8 @@ const uploadCategoryImage = uploadSingleImage("image")
 
 const resizeImage = expressAsyncHandler(
     async (req, res, next) => {
-        console.log(req.file)
-        console.log(req.body)
+        // console.log(req.file)
+        // console.log(req.body)
 
         const fileName = `category-${uuid()}-${Date.now()}.jpeg`
 

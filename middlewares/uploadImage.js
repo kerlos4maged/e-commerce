@@ -4,7 +4,7 @@ const ApiError = require('../utils/api_error');
 const multerCreateion = () => {
     const imageFilteration = function (req, file, cb) {
 
-        console.log(`this is message from file name function on imageFilteration: ${JSON.stringify(file)}`)
+        // console.log(`this is message from file name function on imageFilteration: ${JSON.stringify(file)}`)
         const fileExt = ['png', 'jpg', 'jpeg', 'gif', 'svg', 'webp', 'avif', 'apng']
 
         if (fileExt.includes(file.mimetype.split('/')[1])) {

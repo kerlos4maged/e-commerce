@@ -5,7 +5,7 @@ const morgan = require('morgan');
 dotenv.config({ path: "config/config.env" })
 const app = express()
 
-// require files in your application 
+// require files in your application -> Middleware 
 const path = require('path')
 const mongoConnection = require('./config/database_config');
 const ApiError = require('./utils/api_error');
@@ -16,9 +16,10 @@ const categoryRoutes = require('./routes/category_route');
 const subCategoryRoutes = require('./routes/subcategory_route');
 const brandRoutes = require('./routes/brand_route');
 const productRoutes = require('./routes/product_route');
+const userRoutes = require('./routes/user_route');
+const authRoutes = require('./routes/authentication_route')
 
 // database connection
-// eslint-disable-next-line no-unused-expressions
 mongoConnection()
 
 // middleware 
@@ -30,12 +31,15 @@ if (process.env.NODE_ENV === "development") {
     app.use(morgan('dev'))
     console.log("we used morgan dev and on development")
 }
+
 // Mote routes
 
 app.use('/api/v1/category', categoryRoutes)
 app.use('/api/v1/subCategory', subCategoryRoutes)
 app.use('/api/v1/brand', brandRoutes)
 app.use('/api/v1/product', productRoutes)
+app.use('/api/v1/user', userRoutes)
+app.use('/api/v1/auth',authRoutes)
 
 
 app.all("*", (req, res, next) => {
@@ -69,8 +73,9 @@ process.on("rejectionHandled", (error) => {
 
 process.on("unhandledRejection", (error) => {
     console.log(`UnhandledRejection Error: ${error.name} | ${error.message}}`)
+
     // this is mean will end all connection or any requests happend on server and after this will close the server
-    server.close(() => {
-        process.exit(1)
-    })
+    // server.close(() => {
+    // })
+    process.exit(1)
 })

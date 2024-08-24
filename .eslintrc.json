@@ -17,9 +17,7 @@
       "node/no-unsupported-features/es-syntax": "off",
       "node/no-unpublished-require":"off",
       "node/import/no-extraneous-dependencies":"off",
-      "node/eslint-disable-next-line ":"off",
-      "node/eslint-disable-next-line import/no-extraneous-dependencies":"off",
-      
+      "import/no-extraneous-dependencies": ["off", {"devDependencies": false, "optionalDependencies": false, "peerDependencies": false}],
       "no-undef": "error",
       "prefer-destructuring": ["warn", { "object": true, "array": false }],
       "no-unused-vars": ["warn", { "argsIgnorePattern": "req|res|next|val" }]

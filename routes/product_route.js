@@ -18,18 +18,30 @@ const {
 
 } = require('../utils/validator/productRulesValidator')
 
+const { protected, allowedTo } = require('../controllers/authentication_controller')
+
 const router = express.Router()
 
-router.route('/').get(getAllProducts).post(
-    uploadProductImages,
-    resizeBrandImage,
-    createProductValidator,
-    createProduct)
+router.route('/')
+    .get(getAllProducts)
+    .post(
+        protected,
+        allowedTo('admin'),
+        uploadProductImages,
+        resizeBrandImage,
+        createProductValidator,
+        createProduct)
 
 router.route('/:id')
     .get(checkIdValidator, getProductById)
-    .delete(checkIdValidator, deleteProduct)
+    .delete(
+        protected,
+        allowedTo('admin'),
+        checkIdValidator,
+        deleteProduct)
     .put(
+        protected,
+        allowedTo('admin'),
         uploadProductImages,
         resizeBrandImage,
         updateProductValidator,

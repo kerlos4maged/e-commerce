@@ -11,12 +11,16 @@ const {
     updateCategoryValidator,
 } = require('../utils/validator/categoryRulesValidator');
 
+const { protected, allowedTo } = require('../controllers/authentication_controller');
+
 const subCategoryRoutes = require("./subcategory_route");
 
 router
     .route('/')
     .get(categoryController.getCategories)
     .post(
+        protected,
+        allowedTo('admin'),
         categoryController.uploadCategoryImage,
         categoryController.resizeImage,
         createCategoryValidator,
@@ -26,11 +30,16 @@ router
     .route('/:id')
     .get(checkCategoryIdValidator,
         categoryController.getCategoriesById)
-    .put(updateCategoryValidator,
+    .put(
+        protected,
+        allowedTo('admin'), updateCategoryValidator,
         categoryController.uploadCategoryImage,
         categoryController.resizeImage,
         categoryController.updateCategories)
-    .delete(checkCategoryIdValidator,
+    .delete(
+        protected,
+        allowedTo('admin'),
+        checkCategoryIdValidator,
         categoryController.deleteCategories)
 
 // this is for get subCategory for specific category -> nested route

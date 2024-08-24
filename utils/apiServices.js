@@ -21,14 +21,15 @@ const deleteService = (modelDoc) => asynchandler(async (req, res, next) => {
 //     next()
 // }
 
-const updateService = (modelDoc) => asynchandler(async (req, res, next) => {
+const updateService = (modelDoc) => asynchandler(
+    async (req, res, next) => {
 
-    const item = await modelDoc.findByIdAndUpdate(req.params.id, req.body, { new: true })
-    if (item) {
-        return res.status(200).json({ "status": "success", "document": item })
-    }
-    next(new ApiError(`can't find the item please change ${req.params.id}`, 404))
-})
+        const item = await modelDoc.findByIdAndUpdate(req.params.id, req.body, { new: true })
+        if (item) {
+            return res.status(200).json({ "status": "success", "document": item })
+        }
+        next(new ApiError(`can't find the item please change ${req.params.id}`, 404))
+    })
 
 const getAllDocumentsService = (modelDoc, collectionName) => asynchandler(async (req, res, next) => {
     let subCategoryId = {}
@@ -75,7 +76,7 @@ const getSpecificDocumentService = (modelDoc) => asynchandler(async (req, res, n
     const item = await modelDoc.findById(id)
     // .populate({ path: 'category', select: 'name -_id' })
 
-    console.log(`item data is -> ${id.length}`)
+    // console.log(`item data is -> ${id.length}`)
 
     if (!item) {
         // res.status(404).json({ message: "Category Not Found" })
