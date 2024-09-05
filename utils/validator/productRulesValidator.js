@@ -27,29 +27,40 @@ const createProductValidator = [
             return Promise.reject(new Error(`Category ${value} not found`))
         }
     })),
-    check("subCategory").optional().isMongoId().isArray()
-        .custom((value) => subCategoryModel.find({
-            _id: {
-                $exists: true,
-                $in: value
-            }
-        }
-        ).then((result) => {
-            if (result.length < 1 || result.length !== value.length) {
-                return Promise.reject(new Error(`SubCategory ${value} not found`))
-            }
-        }
-            //this is part used for validation subcategory if belongs to a category
-        )).custom((value, { req }) =>
-            subCategoryModel.find({ category: req.body.category }).then((categoryValue) => {
-                const listOfIds = []
-                categoryValue.forEach((item) => listOfIds.push(item._id.toString()))
-                const checkValue = (targetValueFromRequest, mainValues) => targetValueFromRequest.every((v => mainValues.includes(v)))
-                if (!checkValue(value, listOfIds)) {
-                    console.log("message from productRulesValidator this is message talk for you this false")
-                    return Promise.reject(new Error(`this subCategory id not belong for this category id`))
+    check('subcategories')
+        .optional()
+        .isMongoId()
+        .withMessage('Invalid ID formate')
+        .custom((subcategoriesIds) =>
+            subCategoryModel.find({ _id: { $exists: true, $in: subcategoriesIds } }).then(
+                (result) => {
+                    // console.log(`this is values before error: ${result.length < 1} && ${result.length} && ${subcategoriesIds.toArray().length}`)
+                    if (result.length < 1) {
+                        console.log('we have an error in first custom subCategoryModel')
+                        return Promise.reject(new Error(`Invalid subcategories Ids`));
+                    }
                 }
-            })
+            )
+        )
+        .custom((val, { req }) =>
+            subCategoryModel.find({ category: req.body.category }).then(
+                (subcategories) => {
+                    console.log(`subcategories values is: ${subcategories}`)
+                    const subCategoriesIdsInDB = [];
+                    subcategories.forEach((subCategory) => {
+                        subCategoriesIdsInDB.push(subCategory._id.toString());
+                    });
+                    // check if subcategories ids in db include subcategories in req.body (true)
+                    const checker = function (target, arr) {
+                        return target.every((v) => arr.includes(v));
+                    };
+                    if (!checker(subCategoriesIdsInDB,val)) {
+                        return Promise.reject(
+                            new Error(`subcategories not belong to category`)
+                        );
+                    }
+                }
+            )
         ),
     check("brand").optional().isMongoId().withMessage("Invalid Id format"),
     check("ratingsAverage").optional().isNumeric().withMessage("ratingsAverage must be a number").isLength({ min: 1 }).withMessage("rating min is 1").isLength({ max: 5 }).withMessage("rating max is 5"),

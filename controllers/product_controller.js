@@ -80,7 +80,10 @@ const resizeBrandImage = expressAsyncHandler(async (req, res, next) => {
 
 const getAllProducts = apiServices.getAllDocumentsService(productModel, "Product")
 
-const getProductById = apiServices.getSpecificDocumentService(productModel)
+const getProductById = apiServices.getSpecificDocumentService(
+    productModel,
+    "review"
+)
 
 const createProduct = apiServices.createService(productModel)
 

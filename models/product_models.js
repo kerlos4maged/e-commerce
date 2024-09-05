@@ -57,7 +57,7 @@ const schema = new mongoose.Schema(
             ref: "category model",
             required: [true, "product must be belong to category",]
         },
-        subCategory: [{
+        subcategories: [{
             type: mongoose.Schema.ObjectId,
             ref: "SubCategory",
         }],
@@ -68,16 +68,28 @@ const schema = new mongoose.Schema(
         // focus when object type will be number using min and max not minLength and maxLength
         ratingsAverage: {
             type: Number,
-            min: [1, "too short Product rating"],
+            min: 0,
             max: [5, ""]
         },
-        ratingsQuantity: {
+        reviewQuantity: {
             type: Number,
             default: 0,
         }
     },
-    { timestamps: true },
+    {
+        timestamps: true,
+        // to enables virtuals populate
+        toJSON: { virtuals: true },
+        toObject: { virtuals: true },
+    },
 )
+
+schema.virtual(
+    'review', {
+    ref: 'Review',
+    foreignField: 'product',
+    localField: '_id'
+})
 
 schema.pre(/^find/, function (next) {
     this.populate({ path: "category model", select: '-_id name' })
@@ -111,4 +123,6 @@ schema.post('init', (data) => docItemMiddleware(data))
 
 schema.post('save', (data) => docItemMiddleware(data))
 
-module.exports = mongoose.model("productModel", schema)
+const model = mongoose.model("productModel", schema)
+
+module.exports = model

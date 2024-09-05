@@ -7,7 +7,7 @@ class ApiFeatures {
 
     filter() {
         //1- filter data
-        const queryAfterDestruct = {...this.queryString};
+        const queryAfterDestruct = { ...this.queryString };
         const excludes = ['sort', 'page', 'limit', 'fields']
         excludes.forEach((item) => delete queryAfterDestruct[item])
 
@@ -56,14 +56,14 @@ class ApiFeatures {
                 console.log(`we going to brand search and this is your query ${JSON.stringify(this.queryString.keywords)} `)
 
                 query.$or = [
-                    {title: {$regex: this.queryString.keywords, $options: 'i'}},
-                    {description: {$regex: this.queryString.keywords, $options: 'i'}}
+                    { title: { $regex: this.queryString.keywords, $options: 'i' } },
+                    { description: { $regex: this.queryString.keywords, $options: 'i' } }
                 ]
                 console.log(`this is value return from keywords ${JSON.stringify(query)}`)
             } else {
                 console.log(`we going to brand search and this is your query ${JSON.stringify(this.queryString.keywords)} `)
 
-                query = {name: {$regex: this.queryString.keywords, $options: 'i'}}
+                query = { name: { $regex: this.queryString.keywords, $options: 'i' } }
 
                 console.log(`this is value return from keywords ${JSON.stringify(query)}`)
             }
@@ -75,10 +75,11 @@ class ApiFeatures {
     }
 
     paginate(countDocuments) {
+        console.log(`paginate ${countDocuments}`)
+        
         const paginationObj = {}
 
-
-        const page = parseInt(this.queryString.page, 10) || 1;
+        const page = parseInt(this.queryString.currentPage, 10) || 1;
 
         const limit = parseInt(this.queryString.limit, 10) || 5;
 

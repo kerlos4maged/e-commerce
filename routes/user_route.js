@@ -50,7 +50,7 @@ routes.delete('/deleteUser', protected, deActivateUser)
 routes.put('/activeateUser', activateUser)
 
 routes.use(
-
+    protected,
     allowedTo('admin'),
 )
 
@@ -58,7 +58,8 @@ routes.use(
 
 routes.route('/')
     .get(getAllUsers)
-    .post(uploadUserImage,
+    .post(
+        uploadUserImage,
         resizeUserImage,
         createUserValidator,
         createUser
@@ -67,8 +68,10 @@ routes.route('/')
 // protected && admin only can used it
 
 routes.route('/:id')
-    .get(checkIdValidator,
-        getUserById)
+    .get(
+        checkIdValidator,
+        getUserById
+    )
     .put(uploadUserImage,
         resizeUserImage,
         updateUserValidator,

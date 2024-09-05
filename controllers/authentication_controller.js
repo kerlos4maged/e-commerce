@@ -29,15 +29,17 @@ const login = expressAsyncHandler(async (req, res, next) => {
     if (!user) {
         return next(new ApiError("Incorrect email or password", 404))
     }
+    // console.log(`user email is found in db: ${user.email}`)
     // 3- check if password is correct  by comparing hashed password  with password sent in body  using bcryptjs library  (npm install bcryptjs)
-    const comparePassword = await bcryptjs.compare(password, user.password)
+    const comparePassword = await bcryptjs.compare(password.trim(), user.password)
+    console.log(`Compare password value is: ${comparePassword}`)
     if (!comparePassword) {
         return next(new ApiError("Incorrect email or password", 404))
     }
     // 4- generate token if email and password are correct
     const token = generateToken(user._id)
 
-    res.status(200).json({ "status": "success", data: user, token })
+    res.status(200).json({ "status": "success", token, data: user })
 }
 )
 
@@ -90,11 +92,12 @@ const protected = expressAsyncHandler(async (req, res, next) => {
 
 const allowedTo = (...role) => expressAsyncHandler(async (req, res, next) => {
     // 1- need to get user role for the current route 
+    console.log(`Role send from allowedTo -> ${req.user.role}`)
     // 2- need to check this role with the current user role -> about req.user.role
     if (!role.includes(req.user.role)) {
-        return next(new ApiError("Admin Users only allowed to access this route", 403))
+        return next(new ApiError(`${req.user.role} role can't access this route`, 403))
     }
-
+    console.log(`we moved all errors`)
     next()
 })
 

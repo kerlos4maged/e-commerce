@@ -6,6 +6,7 @@ const bcryptjs = require('bcryptjs')
 const Product = require('../../models/product_models');
 const dbConnection = require('../../config/database_config');
 const usersDB = require('../../models/user_models')
+const reviews = require('../../models/reviews_models')
 
 dotenv.config({ path: '../../config/config.env' });
 
@@ -57,6 +58,16 @@ const createEncrypterTest = async () => {
 
 }
 
+const clearAllReviews = async () => {
+    try {
+        await reviews.deleteMany();
+        console.log('Reviews Destroyed'.red.inverse);
+        process.exit();
+    } catch (error) {
+        console.log(error);
+    }
+}
+
 // console.log(`second item -> ${products.argv[1]} || third item -> ${products.argv[2]}`)
 
 // node seeder.js -d
@@ -82,6 +93,15 @@ if (process.argv[2] === '-c') {
 
 }
 
-(function test() {
-    console.log('No valid arguments provided')
-})()
+if (process.argv[2] === '-r') {
+    clearAllReviews()
+    // process.exit();
+}
+
+else {
+    console.log('Invalid arguments provided'.red.inverse);
+    process.exit();
+}
+// (function test() {
+//     console.log('No valid arguments provided')
+// })()

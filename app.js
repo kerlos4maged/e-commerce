@@ -18,7 +18,9 @@ const brandRoutes = require('./routes/brand_route');
 const productRoutes = require('./routes/product_route');
 const userRoutes = require('./routes/user_route');
 const authRoutes = require('./routes/authentication_route')
-
+const reviewRoutes = require('./routes/reviews_route')
+const wichlistRoutes = require('./routes/wishlist_route')
+const addAddress = require('./routes/address_route')
 // database connection
 mongoConnection()
 
@@ -32,15 +34,17 @@ if (process.env.NODE_ENV === "development") {
     console.log("we used morgan dev and on development")
 }
 
-// Mote routes
+// Mounte routes
 
 app.use('/api/v1/category', categoryRoutes)
 app.use('/api/v1/subCategory', subCategoryRoutes)
 app.use('/api/v1/brand', brandRoutes)
 app.use('/api/v1/product', productRoutes)
 app.use('/api/v1/user', userRoutes)
-app.use('/api/v1/auth',authRoutes)
-
+app.use('/api/v1/auth', authRoutes)
+app.use('/api/v1/review', reviewRoutes)
+app.use('/api/v1/wichlist', wichlistRoutes)
+app.use('/api/v1/addAddress', addAddress)
 
 app.all("*", (req, res, next) => {
 
@@ -72,10 +76,9 @@ process.on("rejectionHandled", (error) => {
 })
 
 process.on("unhandledRejection", (error) => {
-    console.log(`UnhandledRejection Error: ${error.name} | ${error.message}}`)
-
+    console.log(`UnhandledRejection Error: ${error.name} | ${error.message}`)
     // this is mean will end all connection or any requests happend on server and after this will close the server
-    // server.close(() => {
-    // })
-    process.exit(1)
+    server.close(() => {
+        process.exit(1)
+    })
 })

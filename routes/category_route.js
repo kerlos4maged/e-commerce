@@ -29,13 +29,16 @@ router
 router
     .route('/:id')
     .get(checkCategoryIdValidator,
-        categoryController.getCategoriesById)
+        categoryController.getCategoriesById
+    )
     .put(
         protected,
-        allowedTo('admin'), updateCategoryValidator,
+        allowedTo('admin'),
+        updateCategoryValidator,
         categoryController.uploadCategoryImage,
         categoryController.resizeImage,
-        categoryController.updateCategories)
+        categoryController.updateCategories
+    )
     .delete(
         protected,
         allowedTo('admin'),

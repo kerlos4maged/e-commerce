@@ -8,6 +8,7 @@ const {
     deleteSubCategoryController,
     updateSubCategoryController,
     checkCategoryId,
+    setReviewAndProductIdToSearch
 } = require('../controllers/subcategory_controller')
 
 // mergerParams this is used if any another route send params data
@@ -30,11 +31,15 @@ router.route('/')
         allowedTo('admin'),
         checkCategoryId,
         createSubCategoryValidator,
-        createSubCategoryController)
+        createSubCategoryController
+    )
     .get(setIdForGetSubCategory, getSubCategoriesController)
 
 router.route('/:id')
-    .get(getSubCategoryByIdValidator, getSubCategoriesByIdController)
+    .get(
+        getSubCategoryByIdValidator,
+        setReviewAndProductIdToSearch,
+        getSubCategoriesByIdController)
     .delete(
         protected,
         allowedTo('admin'),
@@ -44,6 +49,7 @@ router.route('/:id')
         protected,
         allowedTo('admin'),
         updateSubCategoryValidator,
-        updateSubCategoryController)
+        updateSubCategoryController
+    )
 
 module.exports = router;

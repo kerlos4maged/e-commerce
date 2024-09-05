@@ -11,6 +11,10 @@ const {
     resizeBrandImage,
 } = require('../controllers/product_controller')
 
+// - review route to make nested route -> get all reviews for the product 
+
+const reviewRoutes = require("./reviews_route")
+
 const {
     createProductValidator,
     checkIdValidator,
@@ -30,7 +34,8 @@ router.route('/')
         uploadProductImages,
         resizeBrandImage,
         createProductValidator,
-        createProduct)
+        createProduct
+    )
 
 router.route('/:id')
     .get(checkIdValidator, getProductById)
@@ -46,5 +51,9 @@ router.route('/:id')
         resizeBrandImage,
         updateProductValidator,
         updateProduct)
+
+
+// path -> localhost/products/productId/reviews 
+router.use('/:productId/review/', reviewRoutes)
 
 module.exports = router

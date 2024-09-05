@@ -29,7 +29,7 @@ const userSchema = new mongoose.Schema(
         passwordChangedAt: Date,
         passwordResetCode: String,
         passwordResetExpiresAt: Date,
-        passwordRestVerification:Boolean,
+        passwordRestVerification: Boolean,
         // passwordConfirmation: {
         //     type: String,
         //     // required: [true, "Confirm Password is required"],
@@ -48,9 +48,26 @@ const userSchema = new mongoose.Schema(
         active: {
             type: Boolean,
             default: true,
-        }
+        },
+        wichlist: [
+            {
+                type: mongoose.Schema.ObjectId,
+                ref: 'productModel',
+
+            }
+        ],
+        addresses: [
+            {
+                id: { type: mongoose.Schema.Types.ObjectId, },
+                alias: String,
+                details: String,
+                phone: String,
+                city: String,
+                postalCode: String,
+            }
+        ]
     },
-    { timestamps: true ,strict:false}
+    { timestamps: true, strict: false }
 )
 
 
