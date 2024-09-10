@@ -11,16 +11,10 @@ const mongoConnection = require('./config/database_config');
 const ApiError = require('./utils/api_error');
 const globalError = require('./middlewares/globalError');
 
-// import routs 
-const categoryRoutes = require('./routes/category_route');
-const subCategoryRoutes = require('./routes/subcategory_route');
-const brandRoutes = require('./routes/brand_route');
-const productRoutes = require('./routes/product_route');
-const userRoutes = require('./routes/user_route');
-const authRoutes = require('./routes/authentication_route')
-const reviewRoutes = require('./routes/reviews_route')
-const wichlistRoutes = require('./routes/wishlist_route')
-const addAddress = require('./routes/address_route')
+// import routs
+
+const { mountRoutes } = require('./routes/mount_all_routes')
+
 // database connection
 mongoConnection()
 
@@ -35,16 +29,7 @@ if (process.env.NODE_ENV === "development") {
 }
 
 // Mounte routes
-
-app.use('/api/v1/category', categoryRoutes)
-app.use('/api/v1/subCategory', subCategoryRoutes)
-app.use('/api/v1/brand', brandRoutes)
-app.use('/api/v1/product', productRoutes)
-app.use('/api/v1/user', userRoutes)
-app.use('/api/v1/auth', authRoutes)
-app.use('/api/v1/review', reviewRoutes)
-app.use('/api/v1/wichlist', wichlistRoutes)
-app.use('/api/v1/addAddress', addAddress)
+mountRoutes(app)
 
 app.all("*", (req, res, next) => {
 

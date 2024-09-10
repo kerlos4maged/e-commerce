@@ -17,7 +17,7 @@ const deleteService = (Model) =>
        
         document.deleteOne();
 
-        res.status(204).send({ message: 'Document deleted successfully', Document: document });
+        res.status(202).send({ message: 'Document deleted successfully', Document: document });
     });
 
 // this is first solution to apply slugfiy when update and if used it need to set it on route

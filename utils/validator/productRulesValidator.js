@@ -54,7 +54,7 @@ const createProductValidator = [
                     const checker = function (target, arr) {
                         return target.every((v) => arr.includes(v));
                     };
-                    if (!checker(subCategoriesIdsInDB,val)) {
+                    if (!checker(subCategoriesIdsInDB, val)) {
                         return Promise.reject(
                             new Error(`subcategories not belong to category`)
                         );
@@ -69,10 +69,14 @@ const createProductValidator = [
 ];
 
 const updateProductValidator = [
-    check("title").isLength({ min: 3 }).withMessage("Title should be at least 3 characters").notEmpty().withMessage("Title should not be empty").custom((value, { req }) => {
-        req.body.slug = slugify(value)
-        return true
-    }),
+    check("title")
+        .optional()
+        .isLength({ min: 3 })
+        .withMessage("Title should be at least 3 characters")
+        .custom((value, { req }) => {
+            req.body.slug = slugify(value)
+            return true
+        }),
     check("id").isMongoId().withMessage("Invalid Id format"),
     checkMiddleware
 ]
