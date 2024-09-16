@@ -1,9 +1,16 @@
 const express = require('express');
 const dotenv = require('dotenv');
 const morgan = require('morgan');
+const cors = require('cors');
+const compression = require('compression');
 
 dotenv.config({ path: "config/config.env" })
 const app = express()
+// Enable other domains to access your application
+app.use(cors())
+app.options('*', cors())
+// compressed all responses 
+app.use(compression())
 
 // require files in your application -> Middleware 
 const path = require('path')

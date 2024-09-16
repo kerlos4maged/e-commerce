@@ -45,6 +45,9 @@ const addProductToCart = asyncHandler(
         if (!productPrice) {
             return next(new ApiError('Product or color for this product not found', 404))
         }
+        if (productPrice.quantity <= 0) {
+            return next(new ApiError('Product Sold out', 404))
+        }
         if (!cart) {
             // create new cart and add this product to cart
             cart = await cartModel.create({

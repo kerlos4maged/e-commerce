@@ -40,7 +40,6 @@ const updateService = (modelDoc) => asynchandler(
     })
 
 const getAllDocumentsService = (modelDoc, collectionName) => asynchandler(async (req, res, next) => {
-
     /*
      * steps to get data for nested routes -> 
      * in all nested routes like subCategory (subCategory_controller), review (review_controller)
@@ -50,13 +49,14 @@ const getAllDocumentsService = (modelDoc, collectionName) => asynchandler(async 
      */
 
     let nestedRouteId = {}
+
     if (req.filterById) nestedRouteId = req.filterById
 
     console.log(`this is message from apiService file and this is filterById value: ${JSON.stringify(nestedRouteId)}`)
 
     const docSize = await modelDoc.find(nestedRouteId).countDocuments()
 
-    console.log(`this is message from apiService file and this is docSize value: ${docSize}`)
+    // console.log(`this is message from apiService file and this is docSize value: ${modelDoc} & ${collectionName}`)
 
     const apiFeaturesObj = new ApiFeatures(modelDoc.find(nestedRouteId), req.query)
         .paginate(docSize)

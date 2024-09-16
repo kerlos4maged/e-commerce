@@ -49,7 +49,7 @@ class ApiFeatures {
     }
 
     search(model) {
-        console.log(`this is message from apiFeatures and this is value for model ${model}`)
+        // console.log(`this is message from apiFeatures and this is value for model ${model}`)
         if (this.queryString.keywords) {
             let query = {}
             if (model === "Product") {
@@ -75,7 +75,7 @@ class ApiFeatures {
     }
 
     paginate(countDocuments) {
-        console.log(`paginate ${countDocuments}`)
+        // console.log(`paginate ${countDocuments}`)
         
         const paginationObj = {}
 
