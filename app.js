@@ -81,7 +81,7 @@ app.all("*", (req, res, next) => {
 // Global Error Handling middleware -> this is for handling any errors in express 
 app.use(globalError)
 
-const port = process.env.PORT || 3000
+const port = process.env.port || 3000
 
 const server = app.listen(port, () => {
     console.log(`app listen on ${port} and run in ${process.env.NODE_ENV} environment`)
