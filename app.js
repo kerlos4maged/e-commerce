@@ -11,6 +11,13 @@ const { rateLimit } = require('express-rate-limit')
 dotenv.config({ path: "config/config.env" })
 const app = express()
 
+const uri = process.env.MONGO_URL;
+
+if (!uri) {
+  throw new Error('MONGO_URL environment variable is not set');
+}
+
+
 // require files in your application -> Middleware 
 const path = require('path')
 const mongoConnection = require('./config/database_config');
@@ -30,14 +37,14 @@ app.use(compression())
 // this is for checking (brute force attacks) created on this app using -> rate limit
 // focues the different between this error and any another error style will be because (if app check the user is used brute force attacks won't sending any request to the server)
 
-const message = new ApiError('Too many requests', 429)
+// const message = 
 
 const limit = rateLimit({
-    windowMs: 15 * 60 * 1000, // 1 minutes
-    limit: 100, // Limit each IP to 100 requests per `window` (here, per 15 minutes).
+    windowMs: 15 * 60 * 1000, // 15 minutes
+    limit: 1000, // Limit each IP to 100 requests per `window` (here, per 15 minutes).
     standardHeaders: 'draft-7', // draft-6: `RateLimit-*` headers; draft-7: combined `RateLimit` header
     legacyHeaders: false, // Disable the `X-RateLimit-*` headers.
-    message: message
+    message: "Too many requests"
 })
 
 app.use(limit)
@@ -95,3 +102,5 @@ process.on("unhandledRejection", (error) => {
         process.exit(1)
     })
 })
+
+module.exports = { app }
