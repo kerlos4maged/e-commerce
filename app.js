@@ -3,14 +3,13 @@ const dotenv = require('dotenv');
 const morgan = require('morgan');
 const cors = require('cors');
 const compression = require('compression');
+const { rateLimit } = require('express-rate-limit')
+// const getRawBody = require('raw-body');
+// const contentType = require('content-type')
+
 
 dotenv.config({ path: "config/config.env" })
 const app = express()
-// Enable other domains to access your application
-app.use(cors())
-app.options('*', cors())
-// compressed all responses 
-app.use(compression())
 
 // require files in your application -> Middleware 
 const path = require('path')
@@ -22,11 +21,33 @@ const globalError = require('./middlewares/globalError');
 
 const { mountRoutes } = require('./routes/mount_all_routes')
 
+// Enable other domains to access your application
+app.use(cors())
+app.options('*', cors())
+// compressed all responses 
+app.use(compression())
+
+// this is for checking (brute force attacks) created on this app using -> rate limit
+// focues the different between this error and any another error style will be because (if app check the user is used brute force attacks won't sending any request to the server)
+
+const message = new ApiError('Too many requests', 429)
+
+const limit = rateLimit({
+    windowMs: 15 * 60 * 1000, // 1 minutes
+    limit: 100, // Limit each IP to 100 requests per `window` (here, per 15 minutes).
+    standardHeaders: 'draft-7', // draft-6: `RateLimit-*` headers; draft-7: combined `RateLimit` header
+    legacyHeaders: false, // Disable the `X-RateLimit-*` headers.
+    message: message
+})
+
+app.use(limit)
+
 // database connection
 mongoConnection()
 
 // middleware 
-app.use(express.json())
+// this is for checking (raw body Attack) send with the content using -> raw body, limit in express.json({limit})
+app.use(express.json({ limit: '20KB' }))
 app.use(express.urlencoded({ extended: true }))
 app.use(express.static(path.join(__dirname, 'upload')))
 

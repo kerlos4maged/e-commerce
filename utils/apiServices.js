@@ -79,7 +79,7 @@ const getAllDocumentsService = (modelDoc, collectionName) => asynchandler(async 
 
 const createService = (modelDoc) =>
     asynchandler(async (req, res) => {
-        const data = await modelDoc.create(req.body)
+        const data = await modelDoc.create(req.text)
         res.status(200).json({
             "Status": "Success",
             "result": data
