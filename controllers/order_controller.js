@@ -206,7 +206,8 @@ const createOrderOnlineUsingStripe = (req, res) => {
 
     console.log(`this is value returned from sessions: ${session}`);
 
-    if (session === 'checkout.session.completed') {
+    if (event.type === 'checkout.session.completed') {
+        console.log(`session data after completed: ${event.data.object.client_reference_id}`);
         // create order here 
         res.status(201).send({
             Status: "Success",
