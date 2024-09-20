@@ -201,7 +201,7 @@ const createCartOrders = async (sessions) => {
         isPaid: true,
         paidAt: Date.now(),
     })
-    console.log(order)
+    // console.log(order)
     cangeProductQunatityAfterCreateOrder(order, cart, cartId)
 }
 
@@ -216,15 +216,17 @@ const createOrderOnlineUsingStripe = (req, res) => {
         res.status(400).send(`Webhook Error: ${err.message}`);
         return;
     }
-    let session
     // Handle the event
     switch (event.type) {
         case 'checkout.session.completed':
             // Then define and call a function to handle the event checkout.session.completed
-            createCartOrders(event.data.object)
+            // eslint-disable-next-line no-case-declarations
+            const order = createCartOrders(event.data.object)
+            console.log(`this is order we created it: ${order}`)
             res.status(200).send({
                 "Status": "Success",
                 "message": "received order successfully",
+                order
             })
             break;
         case 'checkout.session.expired':
@@ -239,8 +241,6 @@ const createOrderOnlineUsingStripe = (req, res) => {
         default:
             console.log(`Unhandled event type ${event.type}`);
     }
-
-    console.log(`this is value returned from sessions: ${JSON.stringify(session)}`);
 
     // all the code before this comment get it from stripe webhook creation
 }
