@@ -193,8 +193,8 @@ const createCardOrder = async (session) => {
     // 3) Create order with default paymentMethodType card
     const order = await orderModel.create({
         user: user._id,
-        cartItems: cart.cartItems,
-        shippingAddress,
+        cart: cart.products,
+        // shippingAddress,
         totalOrderPrice: oderPrice,
         isPaid: true,
         paidAt: Date.now(),
