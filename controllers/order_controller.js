@@ -18,7 +18,7 @@ const { sendEmail } = require('../utils/usingEmailToSend')
 const cartModel = require('../models/cart_models')
 const userModel = require('../models/user_models')
 
-const cangeProductQunatityAfterCreateOrder = async (order, cart, cartId) => {
+const changeProductQunatityAfterCreateOrder = async (order, cart, cartId) => {
     // 4- after make the order complete check the quantity for the product and how much is sold
     if (order) {
         const bulkOption = cart.products.map((productItem) => ({
@@ -64,7 +64,7 @@ const payCashOrderController = asyncHandler(async (req, res, next) => {
     console.log(order)
 
     // 4- after make the order complete check the quantity for the product and how much is sold 
-    cangeProductQunatityAfterCreateOrder(order, cart, req.params.id)
+    changeProductQunatityAfterCreateOrder(order, cart, req.params.id)
 
     // 6- send email to the user with order details
     await sendEmail({
@@ -182,28 +182,39 @@ const createSessionUsingString = asyncHandler(
         })
     })
 
-const createCartOrders = async (sessions) => {
-    // 1- get cart id
-    const cartId = sessions.client_reference_id
-    // 2- amount price 
-    const amount = sessions.amount_total / 100 // because when creating a new session multiple amount on 100 
+const createCardOrder = async (session) => {
+    const cartId = session.client_reference_id;
+    const shippingAddress = session.metadata;
+    const oderPrice = session.amount_total / 100;
 
-    const cart = await cartModel.findById(cartId)
-    const user = userModel.findOne({ email: sessions.email })
-    // 3- create order and save it in database
+    const cart = await cartModel.findById(cartId);
+    const user = await userModel.findOne({ email: session.customer_email });
 
+    // 3) Create order with default paymentMethodType card
     const order = await orderModel.create({
         user: user._id,
-        cart: cart.products,
-        totalOrderPrice: amount,
-        shippingAddress: sessions.metadata,
-        paymentMethod: 'card',
+        cartItems: cart.cartItems,
+        shippingAddress,
+        totalOrderPrice: oderPrice,
         isPaid: true,
         paidAt: Date.now(),
-    })
-    // console.log(order)
-    cangeProductQunatityAfterCreateOrder(order, cart, cartId)
-}
+        paymentMethodType: 'card',
+    });
+
+    // 4) After creating order, decrement product quantity, increment product sold
+    if (order) {
+        const bulkOption = cart.cartItems.map((item) => ({
+            updateOne: {
+                filter: { _id: item.product },
+                update: { $inc: { quantity: -item.quantity, sold: +item.quantity } },
+            },
+        }));
+        await productModel.bulkWrite(bulkOption, {});
+
+        // 5) Clear cart depend on cartId
+        await cartModel.findByIdAndDelete(cartId);
+    }
+};
 
 const createOrderOnlineUsingStripe = (req, res) => {
     const sig = req.headers['stripe-signature'];
@@ -221,12 +232,11 @@ const createOrderOnlineUsingStripe = (req, res) => {
         case 'checkout.session.completed':
             // Then define and call a function to handle the event checkout.session.completed
             // eslint-disable-next-line no-case-declarations
-            const order = createCartOrders(event.data.object)
-            console.log(`this is order we created it: ${order}`)
+            createCardOrder(event.data.object);
+            console.log('we moved in checkout.session.completed')
             res.status(200).send({
                 "Status": "Success",
                 "message": "received order successfully",
-                order
             })
             break;
         case 'checkout.session.expired':
