@@ -73,7 +73,7 @@ const payCashOrderController = asyncHandler(async (req, res, next) => {
         message: `Your order has been placed successfully. Order ID: ${order._id}\nyour total price is:${order.totalOrderPrice}`,
     })
     res.status(201).json({
-        success: true,
+        Success: "Success",
         message: 'Order placed successfully checked your email ',
         data: order,
     })
@@ -198,7 +198,7 @@ const createCardOrder = async (session) => {
         totalOrderPrice: oderPrice,
         isPaid: true,
         paidAt: Date.now(),
-        paymentMethodType: 'card',
+        paymentMethod: 'card',
     });
 
     // 4) After creating order, decrement product quantity, increment product sold
