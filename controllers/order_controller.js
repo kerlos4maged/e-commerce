@@ -220,12 +220,20 @@ const createOrderOnlineUsingStripe = (req, res) => {
     // Handle the event
     switch (event.type) {
         case 'checkout.session.completed':
-            session = event.data.object;
             // Then define and call a function to handle the event checkout.session.completed
+            createCartOrders(event.data.object)
+            res.status(200).send({
+                "Status": "Success",
+                "message": "received order successfully",
+            })
             break;
         case 'checkout.session.expired':
-            session = event.data.object;
-            // Then define and call a function to handle the event checkout.session.expired
+            res.status(400).send({
+                // Then define and call a function to handle the event checkout.session.expired
+                Status: "Failed",
+                message: "payment failed",
+                Error: "checkout session expired"
+            });
             break;
         // ... handle other event types
         default:
@@ -235,23 +243,6 @@ const createOrderOnlineUsingStripe = (req, res) => {
     console.log(`this is value returned from sessions: ${JSON.stringify(session)}`);
 
     // all the code before this comment get it from stripe webhook creation
-
-    if (event.type === 'checkout.session.completed') {
-        console.log(`session data after completed: ${event.data.object.client_reference_id}`);
-        // create order here 
-        createCartOrders(event.data.object)
-        res.status(200).send({
-            "Status": "Success",
-            "message": "received order successfully",
-        })
-    } else {
-        res.status(400).send({
-            Status: "Failed",
-            message: "payment failed",
-            Error: "checkout session expired"
-        });
-    }
-
 }
 
 module.exports = {
