@@ -4,9 +4,7 @@ const morgan = require('morgan');
 const cors = require('cors');
 const compression = require('compression');
 const { rateLimit } = require('express-rate-limit')
-// const getRawBody = require('raw-body');
-// const contentType = require('content-type')
-
+const stripe = require('stripe');
 
 dotenv.config({ path: "config/config.env" })
 const app = express()
@@ -14,7 +12,7 @@ const app = express()
 const uri = process.env.MONGO_URL;
 
 if (!uri) {
-  throw new Error('MONGO_URL environment variable is not set');
+    throw new Error('MONGO_URL environment variable is not set');
 }
 
 
@@ -31,8 +29,13 @@ const { mountRoutes } = require('./routes/mount_all_routes')
 // Enable other domains to access your application
 app.use(cors())
 app.options('*', cors())
+
 // compressed all responses 
 app.use(compression())
+
+// routes for webhooks 
+
+app.post('webhook-checkout', express.raw({ type: 'application/json' }),)
 
 // this is for checking (brute force attacks) created on this app using -> rate limit
 // focues the different between this error and any another error style will be because (if app check the user is used brute force attacks won't sending any request to the server)

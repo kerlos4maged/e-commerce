@@ -127,7 +127,7 @@ const updateOrderDeliveredController = asyncHandler(async (req, res, next) => {
     })
 })
 
-const payOnlineUsingStripe = asyncHandler(
+const createSessionUsingString = asyncHandler(
     async (req, res, next) => {
         // app settings Admin user will set it 
         const taxPrice = 0
@@ -177,6 +177,52 @@ const payOnlineUsingStripe = asyncHandler(
         })
     })
 
+const createOrderOnlineUsingStripe = (req, res) => {
+    const sig = req.headers['stripe-signature'];
+
+    let event;
+
+    try {
+        event = stripe.webhooks.constructEvent(req.body, sig, process.env.stripe_web_hook_key);
+    } catch (err) {
+        res.status(400).send(`Webhook Error: ${err.message}`);
+        return;
+    }
+    let session
+    // Handle the event
+    switch (event.type) {
+        case 'checkout.session.completed':
+            session = event.data.object;
+            // Then define and call a function to handle the event checkout.session.completed
+            break;
+        case 'checkout.session.expired':
+            session = event.data.object;
+            // Then define and call a function to handle the event checkout.session.expired
+            break;
+        // ... handle other event types
+        default:
+            console.log(`Unhandled event type ${event.type}`);
+    }
+
+    console.log(`this is value returned from sessions: ${session}`);
+
+    if (session === 'checkout.session.completed') {
+        // create order here 
+        res.status(201).send({
+            Status: "Success",
+            message: "payment received"
+        });
+    } else {
+        res.status(400).send({
+            Status: "Failed",
+            message: "payment failed",
+            Error: "checkout session expired"
+        });
+    }
+
+
+}
+
 module.exports = {
     payCashOrderController,
     getAllOrdersController,
@@ -184,5 +230,6 @@ module.exports = {
     getSpecificOrdersController,
     updateOrderToPayController,
     updateOrderDeliveredController,
-    payOnlineUsingStripe,
+    createSessionUsingString,
+    createOrderOnlineUsingStripe
 }

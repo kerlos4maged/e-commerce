@@ -14,12 +14,12 @@ const {
     getSpecificOrdersController,
     updateOrderToPayController,
     updateOrderDeliveredController,
-    payOnlineUsingStripe
+    createSessionUsingString
 } = require('../controllers/order_controller')
 
 router.use(protected)
 
-router.get('/checkout-sessions/:id', payOnlineUsingStripe)
+router.get('/checkout-sessions/:id', createSessionUsingString)
 
 router.route('/')
     .get(
