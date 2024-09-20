@@ -184,22 +184,20 @@ const createSessionUsingString = asyncHandler(
 
 const createCardOrder = async (session) => {
     const cartId = session.client_reference_id;
-    const shippingAddress = session.metadata;
-    const oderPrice = session.amount_total / 100;
+    const orderPrice = session.amount_total / 100;
 
     const cart = await cartModel.findById(cartId);
     const user = await userModel.findOne({ email: session.customer_email });
 
     // 3) Create order with default paymentMethodType card
     const order = await orderModel.create({
-        user: user._id,
+        user: user.price_data,
         cart: cart.products,
-        // shippingAddress,
-        totalOrderPrice: oderPrice,
-        isPaid: true,
-        paidAt: Date.now(),
+        totalOrderPrice: orderPrice,
         paymentMethod: 'card',
-    });
+        isPaid: true,
+        paidAt: Date.now()
+    })
 
     // 4) After creating order, decrement product quantity, increment product sold
     if (order) {
