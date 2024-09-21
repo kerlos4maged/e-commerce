@@ -180,41 +180,6 @@ const createSessionUsingString = asyncHandler(
         console.log(`end session creations successfully`)
     })
 
-const createCardOrder = async (session) => {
-    console.log('create card order method is started to work....')
-    const cartId = session.client_reference_id;
-    const orderPrice = session.amount_total / 100;
-
-    const cart = await cartModel.findById(cartId);
-    const user = await userModel.findOne({ email: session.customer_email });
-    console.log(`cartId is: ${cartId}\norderPrice is: ${orderPrice}\nuser is: ${user}`)
-    // 3) Create order with default paymentMethodType card
-    const order = await orderModel.create({
-        user: user._id,
-        cart: cart.products,
-        totalOrderPrice: orderPrice,
-        paymentMethod: 'card',
-        isPaid: true,
-        paidAt: Date.now()
-    })
-    console.log(`this is order value: ${order}`)
-    // 4) After creating order, decrement product quantity, increment product sold
-    if (order) {
-        console.log(`we now going to order check`)
-
-        const bulkOption = cart.cartItems.map((item) => ({
-            updateOne: {
-                filter: { _id: item.product },
-                update: { $inc: { quantity: -item.quantity, sold: +item.quantity } },
-            },
-        }));
-
-        await productModel.bulkWrite(bulkOption, {});
-
-        // 5) Clear cart depend on cartId
-        await cartModel.findByIdAndDelete(cartId);
-    }
-};
 
 const createOrderOnlineUsingStripe = (req, res) => {
     const sig = req.headers['stripe-signature'];
@@ -232,7 +197,7 @@ const createOrderOnlineUsingStripe = (req, res) => {
         case 'checkout.session.completed':
             // Then define and call a function to handle the event checkout.session.completed
             // eslint-disable-next-line no-case-declarations
-            createCardOrder(event.data.object);
+            // createCardOrder(event.data.object);
             console.log('we moved in checkout.session.completed')
             res.status(200).send({
                 "Status": "Success",
@@ -255,12 +220,11 @@ const createOrderOnlineUsingStripe = (req, res) => {
     // all the code before this comment get it from stripe webhook creation
 }
 
-const createOrderOnlineLocal = (req, res) => {
+const createOrderOnlineLocal = async (req, res) => {
     // Temporarily bypass signature check in local testing with Postman
     const TESTING_WITH_POSTMAN = false; // Set this to `true` for local testing
 
     let event;
-
 
     if (!TESTING_WITH_POSTMAN) {
         const sig = req.headers['stripe-signature'];
@@ -283,12 +247,41 @@ const createOrderOnlineLocal = (req, res) => {
     if (event.type === 'checkout.session.completed') {
         const paymentIntent = event.data;
         console.log('PaymentIntent was successful!');
-        createCardOrder(paymentIntent);
+
+        const cartId = paymentIntent.client_reference_id;
+        const orderPrice = paymentIntent.amount_total / 100;
+
+        const cart = await cartModel.findById(cartId);
+        const user = await userModel.findOne({ email: paymentIntent.customer_email });
+
+
+        // 3) Create order with default paymentMethodType card
+        const order = await orderModel.create({
+            user: user._id,
+            cart: cart.products,
+            totalOrderPrice: orderPrice,
+            paymentMethod: 'card',
+            isPaid: true,
+            paidAt: Date.now()
+        })
+        // 4) After creating order, decrement product quantity, increment product sold
+        if (order) {
+            const bulkOption = cart.cartItems.map((item) => ({
+                updateOne: {
+                    filter: { _id: item.product },
+                    update: { $inc: { quantity: -item.quantity, sold: +item.quantity } },
+                },
+            }));
+
+            await productModel.bulkWrite(bulkOption, {});
+
+            // 5) Clear cart depend on cartId
+            await cartModel.findByIdAndDelete(cartId);
+        }
+
         res.status(200).send({ success: true, message: "event type is checkout.session.completed" });
     } else {
-        const paymentIntent = event.data;
         console.log('PaymentIntent was successful! from else');
-        createCardOrder(paymentIntent);
         res.status(200).send({ success: true, message: "event type not checkout.session.completed" });
 
     }
