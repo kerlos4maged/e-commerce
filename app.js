@@ -45,7 +45,7 @@ app.use(compression())
 app.use(bodyParser.raw({ type: 'application/json' }));
 
 app.post(
-    '/webhook',
+    '/webhook-checkout',
     // express.raw({ type: 'application/json' }),
     createOrderOnlineLocal
 )
