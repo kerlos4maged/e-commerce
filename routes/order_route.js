@@ -29,7 +29,7 @@ router.route('/')
     )
 
 
-router.route('/:id')
+router.route('/cash/:id')
     .post(allowedTo('user'), payCashOrderController)
     .get(allowedTo('user'), getSpecificOrdersController)
 
