@@ -247,18 +247,24 @@ const createOrderData = async (cartId, orderPrice, cart, user) => {
 
     // 4) After creating order, decrement product quantity, increment product sold
     if (order) {
-        const bulkOption = cart.cartItems.map((item) => ({
+        const bulkOption = cart.products.map((item) => ({
             updateOne: {
                 filter: { _id: item.product },
-                update: { $inc: { quantity: -item.quantity, sold: +item.quantity } },
+                update: {
+                    $inc: {
+                        quantity: -item.quantity,
+                        sold: +item.quantity
+                    }
+                },
             },
         }));
 
         await productModel.bulkWrite(bulkOption, {});
+        await productModel.save();
 
         // 5) Clear cart depend on cartId
         await cartModel.findByIdAndDelete(cartId);
-
+        await cartModel.save();
     }
 
     console.log('order created successfully...')
