@@ -279,14 +279,15 @@ const createOrderOnlineLocal = (req, res) => {
     if (event.type === 'checkout.session.completed') {
         const paymentIntent = event.data.object;
         console.log('PaymentIntent was successful!', paymentIntent);
+        res.status(200).send({ success: true, message: "event type is checkout.session.completed" });
     } else {
         const paymentIntent = event.data.object;
         console.log('PaymentIntent was successful! from else', paymentIntent);
         createCardOrder(paymentIntent);
+        res.status(200).send({ success: true, message: "event type not checkout.session.completed" });
+
     }
 
-    // Return a 200 response to acknowledge receipt of the event
-    res.status(200).send({ success: true });
 };
 
 module.exports = {
