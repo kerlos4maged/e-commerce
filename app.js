@@ -5,7 +5,9 @@ const cors = require('cors');
 const compression = require('compression');
 const { rateLimit } = require('express-rate-limit')
 const path = require('path')
-const { createOrderOnlineUsingStripe } = require('./controllers/order_controller');
+const bodyParser = require('body-parser');
+
+const { createOrderOnlineLocal } = require('./controllers/order_controller');
 
 dotenv.config({ path: "config/config.env" })
 const app = express()
@@ -35,10 +37,17 @@ app.use(compression())
 
 // routes for webhooks 
 
+// app.post(
+//     '/webhook-checkout',
+//     express.raw({ type: 'application/json' }),
+//     createOrderOnlineLocal
+// )
+app.use(bodyParser.raw({ type: 'application/json' }));
+
 app.post(
-    '/webhook-checkout',
-    express.raw({ type: 'application/json' }),
-    createOrderOnlineUsingStripe
+    '/webhook',
+    // express.raw({ type: 'application/json' }),
+    createOrderOnlineLocal
 )
 
 // this is for checking (brute force attacks) created on this app using -> rate limit

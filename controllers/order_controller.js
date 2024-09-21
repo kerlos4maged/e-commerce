@@ -148,7 +148,6 @@ const createSessionUsingString = asyncHandler(
         const totalOrderPrice = cartPrice + taxPrice + shippingPrice
 
         // 3- create session 
-        console.log('we now will move to the session creation')
         const session = await stripe.checkout.sessions.create({
             payment_method_types: ['card'], // this is mean that the payment will be done by card
             line_items: [
@@ -172,17 +171,17 @@ const createSessionUsingString = asyncHandler(
             metadata: req.body.shoppingAddress
         })
 
-        console.log(`this is session created : ${session}`)
-
         // 4- send session to response 
         res.status(200).send({
             success: 'true',
             message: 'Checkout session created',
             session,
         })
+        console.log(`end session creations successfully`)
     })
 
 const createCardOrder = async (session) => {
+    console.log('create card order method is started to work....')
     const cartId = session.client_reference_id;
     const orderPrice = session.amount_total / 100;
 
@@ -191,14 +190,14 @@ const createCardOrder = async (session) => {
 
     // 3) Create order with default paymentMethodType card
     const order = await orderModel.create({
-        user: user.price_data,
+        user: user._id,
         cart: cart.products,
         totalOrderPrice: orderPrice,
         paymentMethod: 'card',
         isPaid: true,
         paidAt: Date.now()
     })
-
+    console.log(`this is order value: ${order}`)
     // 4) After creating order, decrement product quantity, increment product sold
     if (order) {
         const bulkOption = cart.cartItems.map((item) => ({
@@ -253,6 +252,40 @@ const createOrderOnlineUsingStripe = (req, res) => {
     // all the code before this comment get it from stripe webhook creation
 }
 
+const createOrderOnlineLocal = (req, res) => {
+    // Temporarily bypass signature check in local testing with Postman
+    const TESTING_WITH_POSTMAN = false; // Set this to `true` for local testing
+
+    let event;
+
+
+    if (!TESTING_WITH_POSTMAN) {
+        const sig = req.headers['stripe-signature'];
+        try {
+            event = stripe.webhooks.constructEvent(req.body, sig, process.env.stripe_web_hook_key);
+        } catch (err) {
+            console.log('Webhook signature verification failed:', err.message);
+            return res.status(400).send(`Webhook Error: ${err.message}`);
+        }
+    } else {
+        // Skip signature verification for Postman testing
+        console.log('Skipping signature verification for testing');
+        event = req.body; // Directly using the body sent by Postman
+    }
+
+    console.log(`event value is: ${JSON.stringify(event)}`);
+
+    // Handle the event
+    if (event.type === 'payment_intent.succeeded') {
+        const paymentIntent = event.data.object;
+        console.log('PaymentIntent was successful!', paymentIntent);
+        createCardOrder(paymentIntent);
+    }
+
+    // Return a 200 response to acknowledge receipt of the event
+    res.status(200).send({ success: true });
+};
+
 module.exports = {
     payCashOrderController,
     getAllOrdersController,
@@ -261,5 +294,6 @@ module.exports = {
     updateOrderToPayController,
     updateOrderDeliveredController,
     createSessionUsingString,
-    createOrderOnlineUsingStripe
+    createOrderOnlineUsingStripe,
+    createOrderOnlineLocal,
 }
