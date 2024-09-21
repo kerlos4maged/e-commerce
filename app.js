@@ -7,16 +7,10 @@ const { rateLimit } = require('express-rate-limit')
 const path = require('path')
 const bodyParser = require('body-parser');
 
-const { createOrderOnlineLocal } = require('./controllers/order_controller');
+const { createOrderOnline } = require('./controllers/order_controller');
 
 dotenv.config({ path: "config/config.env" })
 const app = express()
-
-const uri = process.env.MONGO_URL;
-
-if (!uri) {
-    throw new Error('MONGO_URL environment variable is not set');
-}
 
 
 // require files in your application -> Middleware 
@@ -39,19 +33,10 @@ app.use(compression())
 
 app.use(bodyParser.raw({ type: 'application/json' }));
 
-// app.post(
-//     '/webhook',
-//     // express.raw({ type: 'application/json' }),
-//     createOrderOnlineLocal
-// )
-
 app.post(
     '/webhook-checkout',
-    // express.raw({ type: 'application/json' }),
-    createOrderOnlineLocal
+    createOrderOnline
 )
-
-// app.post('/test/webhook',createOrderOnlineLocal)
 
 // this is for checking (brute force attacks) created on this app using -> rate limit
 // focues the different between this error and any another error style will be because (if app check the user is used brute force attacks won't sending any request to the server)

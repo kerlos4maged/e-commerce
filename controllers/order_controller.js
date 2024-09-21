@@ -181,45 +181,6 @@ const createSessionUsingString = asyncHandler(
     })
 
 
-const createOrderOnlineUsingStripe = (req, res) => {
-    const sig = req.headers['stripe-signature'];
-
-    let event;
-
-    try {
-        event = stripe.webhooks.constructEvent(req.body, sig, process.env.stripe_web_hook_key);
-    } catch (err) {
-        res.status(400).send(`Webhook Error: ${err.message}`);
-        return;
-    }
-    // Handle the event
-    switch (event.type) {
-        case 'checkout.session.completed':
-            // Then define and call a function to handle the event checkout.session.completed
-            // eslint-disable-next-line no-case-declarations
-            // createCardOrder(event.data.object);
-            console.log('we moved in checkout.session.completed')
-            res.status(200).send({
-                "Status": "Success",
-                "message": "received order successfully",
-            })
-            break;
-        case 'checkout.session.expired':
-            res.status(400).send({
-                // Then define and call a function to handle the event checkout.session.expired
-                Status: "Failed",
-                message: "payment failed",
-                Error: "checkout session expired"
-            });
-            break;
-        // ... handle other event types
-        default:
-            console.log(`Unhandled event type ${event.type}`);
-    }
-
-    // all the code before this comment get it from stripe webhook creation
-}
-
 const createOrderData = async (paymentIntent) => {
     console.log('creating order data started...')
 
@@ -274,7 +235,7 @@ const createOrderData = async (paymentIntent) => {
 
 }
 
-const createOrderOnlineLocal = async (req, res) => {
+const createOrderOnline = async (req, res) => {
     // Temporarily bypass signature check in local testing with Postman
     const TESTING_WITH_POSTMAN = false; // Set this to `true` for local testing
 
@@ -320,6 +281,6 @@ module.exports = {
     updateOrderToPayController,
     updateOrderDeliveredController,
     createSessionUsingString,
-    createOrderOnlineUsingStripe,
-    createOrderOnlineLocal,
+    // createOrderOnlineUsingStripe,
+    createOrderOnline,
 }
