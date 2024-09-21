@@ -276,7 +276,7 @@ const createOrderOnlineLocal = (req, res) => {
     console.log(`event value is: ${JSON.stringify(event)}`);
 
     // Handle the event
-    if (event.type === 'payment_intent.succeeded') {
+    if (event.type === 'checkout.session.completed') {
         const paymentIntent = event.data.object;
         console.log('PaymentIntent was successful!', paymentIntent);
         createCardOrder(paymentIntent);
