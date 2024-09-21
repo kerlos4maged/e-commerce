@@ -245,7 +245,7 @@ const createOrderOnlineLocal = async (req, res) => {
 
     // Handle the event
     if (event.type === 'checkout.session.completed') {
-        const paymentIntent = event.data;
+        const paymentIntent = event.data.object;
         console.log('PaymentIntent was successful!');
 
         const cartId = paymentIntent.client_reference_id;
