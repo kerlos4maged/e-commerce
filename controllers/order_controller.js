@@ -260,11 +260,10 @@ const createOrderData = async (cartId, orderPrice, cart, user) => {
         }));
 
         await productModel.bulkWrite(bulkOption, {});
-        await productModel.save();
 
         // 5) Clear cart depend on cartId
-        await cartModel.findByIdAndDelete(cartId);
-        await cartModel.save();
+        const cartDeleted = await cartModel.findByIdAndDelete(cartId);
+        await cartDeleted.save();
     }
 
     console.log('order created successfully...')
