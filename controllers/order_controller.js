@@ -187,7 +187,7 @@ const createCardOrder = async (session) => {
 
     const cart = await cartModel.findById(cartId);
     const user = await userModel.findOne({ email: session.customer_email });
-
+    console.log(`cartId is: ${cartId}\norderPrice is: ${orderPrice}\nuser is: ${user}`)
     // 3) Create order with default paymentMethodType card
     const order = await orderModel.create({
         user: user._id,
@@ -200,12 +200,15 @@ const createCardOrder = async (session) => {
     console.log(`this is order value: ${order}`)
     // 4) After creating order, decrement product quantity, increment product sold
     if (order) {
+        console.log(`we now going to order check`)
+
         const bulkOption = cart.cartItems.map((item) => ({
             updateOne: {
                 filter: { _id: item.product },
                 update: { $inc: { quantity: -item.quantity, sold: +item.quantity } },
             },
         }));
+
         await productModel.bulkWrite(bulkOption, {});
 
         // 5) Clear cart depend on cartId
@@ -270,24 +273,26 @@ const createOrderOnlineLocal = (req, res) => {
     } else {
         // Skip signature verification for Postman testing
         console.log('Skipping signature verification for testing');
+        console.log(`this is request body value: ${req.body}`)
         event = req.body; // Directly using the body sent by Postman
     }
 
-    console.log(`event value is: ${JSON.stringify(event)}`);
+    console.log(`we now moved after first checking & this is event type: ${event.type}`)
 
     // Handle the event
     if (event.type === 'checkout.session.completed') {
-        const paymentIntent = event.data.object;
-        console.log('PaymentIntent was successful!', paymentIntent);
+        const paymentIntent = event.data;
+        console.log('PaymentIntent was successful!');
+        createCardOrder(paymentIntent);
         res.status(200).send({ success: true, message: "event type is checkout.session.completed" });
     } else {
-        const paymentIntent = event.data.object;
-        console.log('PaymentIntent was successful! from else', paymentIntent);
+        const paymentIntent = event.data;
+        console.log('PaymentIntent was successful! from else');
         createCardOrder(paymentIntent);
         res.status(200).send({ success: true, message: "event type not checkout.session.completed" });
 
     }
-
+    console.log('event not going to if or else')
 };
 
 module.exports = {

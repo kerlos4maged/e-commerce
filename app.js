@@ -37,18 +37,21 @@ app.use(compression())
 
 // routes for webhooks 
 
+app.use(bodyParser.raw({ type: 'application/json' }));
+
 // app.post(
-//     '/webhook-checkout',
-//     express.raw({ type: 'application/json' }),
+//     '/webhook',
+//     // express.raw({ type: 'application/json' }),
 //     createOrderOnlineLocal
 // )
-app.use(bodyParser.raw({ type: 'application/json' }));
 
 app.post(
     '/webhook-checkout',
     // express.raw({ type: 'application/json' }),
     createOrderOnlineLocal
 )
+
+// app.post('/test/webhook',createOrderOnlineLocal)
 
 // this is for checking (brute force attacks) created on this app using -> rate limit
 // focues the different between this error and any another error style will be because (if app check the user is used brute force attacks won't sending any request to the server)
