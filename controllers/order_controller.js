@@ -220,9 +220,13 @@ const createOrderOnlineUsingStripe = (req, res) => {
     // all the code before this comment get it from stripe webhook creation
 }
 
-const createOrderData = async (cartId, orderPrice, cart, user) => {
+const createOrderData = async (paymentIntent) => {
     console.log('creating order data started...')
 
+    const cartId = paymentIntent.client_reference_id;
+    const orderPrice = paymentIntent.amount_total / 100;
+    const cart = await cartModel.findById(cartId);
+    const user = await userModel.findOne({ email: paymentIntent.customer_email });
 
     console.log(
         `
@@ -296,12 +300,8 @@ const createOrderOnlineLocal = async (req, res) => {
     // Handle the event
     if (event.type === 'checkout.session.completed') {
         const paymentIntent = event.data.object;
-        const cartId = paymentIntent.client_reference_id;
-        const orderPrice = paymentIntent.amount_total / 100;
-        const cart = await cartModel.findById(cartId);
-        const user = await userModel.findOne({ email: paymentIntent.customer_email });
         console.log('PaymentIntent was successful!');
-        createOrderData(cartId, orderPrice, cart, user)
+        createOrderData(paymentIntent)
         console.log('The End...')
         res.status(200).send({ success: true, message: "event type is checkout.session.completed" });
     } else {
