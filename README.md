@@ -117,9 +117,9 @@ This API serves as the backend for an e-commerce application, providing endpoint
 - **Update cart**: `PUT api/v1/cart`
 
 ## steps to run
-- **npm i**: for install all packages
-- **set config file **: have secure data like port, stripe API key, jsonwebtoken security key
-- **npm run start:dev**: for run the project in development mode
+- **npm i**: `for install all packages`
+- **set config file**: `have secure data like port, stripe API key, jsonwebtoken security key`
+- **npm run start:dev**: `for run the project in development mode`
 
 ## Error Handling
 The API uses standard HTTP status codes to indicate the outcome of a request. Common error responses include:
