@@ -18,9 +18,6 @@ This document provides a comprehensive overview of the API routes for the applic
 - [Cart](#cart)
 - [Error Handling](#error-handling)
 - [API Versioning](#api-versioning)
-- [Environment Setup](#environment-setup)
-- [Contributing](#contributing)
-- [License](#license)
 - [steps to run](#steps-to-run)
 
 ## Introduction
@@ -119,6 +116,11 @@ This API serves as the backend for an e-commerce application, providing endpoint
 - **Get cart**: `GET api/v1/cart`
 - **Update cart**: `PUT api/v1/cart`
 
+## steps to run
+- **npm i**: for install all packages
+- **set config file **: have secure data like port, stripe API key, jsonwebtoken security key
+- **npm run start:dev**: for run the project in development mode
+
 ## Error Handling
 The API uses standard HTTP status codes to indicate the outcome of a request. Common error responses include:
 - **400 Bad Request**: The request was invalid. Check the request body and parameters.
@@ -132,8 +134,3 @@ In the response body, you will receive a JSON object with an error message, for 
 {
     "error": "Resource not found."
 }
-
-## steps to run
-- **npm i**: for install all packages
-- **set config file **: have secure data like port, stripe API key, jsonwebtoken security key
-- **npm run start:dev**: for run the project in development mode
