@@ -21,6 +21,7 @@ This document provides a comprehensive overview of the API routes for the applic
 - [Environment Setup](#environment-setup)
 - [Contributing](#contributing)
 - [License](#license)
+- [steps to run](#steps-to-run)
 
 ## Introduction
 This API serves as the backend for an e-commerce application, providing endpoints for managing products, users, orders, and more. All routes are protected, and certain routes are restricted to admin users.
@@ -131,3 +132,8 @@ In the response body, you will receive a JSON object with an error message, for 
 {
     "error": "Resource not found."
 }
+
+## steps to run
+- **npm i**: for install all packages
+- **set config file **: have secure data like port, stripe API key, jsonwebtoken security key
+- **npm run start:dev**: for run the project in development mode
