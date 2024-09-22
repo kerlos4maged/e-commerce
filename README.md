@@ -16,9 +16,8 @@ This document provides a comprehensive overview of the API routes for the applic
 - [Addresses](#addresses)
 - [Coupons](#coupons)
 - [Cart](#cart)
-- [Error Handling](#error-handling)
-- [API Versioning](#api-versioning)
 - [steps to run](#steps-to-run)
+- [Error Handling](#error-handling)
 
 ## Introduction
 This API serves as the backend for an e-commerce application, providing endpoints for managing products, users, orders, and more. All routes are protected, and certain routes are restricted to admin users.
