@@ -11,7 +11,6 @@ const sendEmail = async (emailOptions) => {
             pass: "fmgr jrvp wrrl iepn"
         }
     });
-    console.log(`we moved from createTransport step`)
     // 2- define email options like (from, to, subject, message,...)
     const mailOptions = {
         from: `E-Commerce App <kerlosmaged37@gmail.com>`,
@@ -20,11 +19,9 @@ const sendEmail = async (emailOptions) => {
         text: emailOptions.message,
         
     }
-    console.log(`we moved from mailOptions step`)
     // 3- send email
     await transport.sendMail(mailOptions)
 
-    console.log(`we send email successfully`)
     // return emailValue
 }
 

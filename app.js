@@ -6,6 +6,10 @@ const compression = require('compression');
 const { rateLimit } = require('express-rate-limit')
 const path = require('path')
 const bodyParser = require('body-parser');
+const hpp = require('hpp');
+const mongoSanitizer = require('express-mongo-sanitize');
+const helmet = require('helmet')
+const session = require('express-session');
 
 const { createOrderOnline } = require('./controllers/order_controller');
 
@@ -53,6 +57,15 @@ const limit = rateLimit({
 
 app.use(limit)
 
+// used sessions package for secure sessions and secure from scrf attacks.
+
+app.use(session({
+    secret: process.env.SESSION_SECRET,
+    resave: false,
+    saveUninitialized: false,
+    cookie: { secure: process.env.NODE_ENV === 'production', maxAge: 1000 * 60 * 60 * 24 * 7 }
+}))
+
 // database connection
 mongoConnection()
 
@@ -64,8 +77,20 @@ app.use(express.static(path.join(__dirname, 'upload')))
 
 if (process.env.NODE_ENV === "development") {
     app.use(morgan('dev'))
-    console.log("we used morgan dev and on development")
+
 }
+
+// HTTP Parameter Pollution attacks
+
+app.use(hpp({ whitelist: ['price', 'sold', 'quantity',] }))
+
+// mongo sanitize, to validate if the request have any sql injection code or anything illegal
+
+app.use(mongoSanitizer())
+
+// Helmet helps you secure your Express apps by setting various HTTP headers
+
+app.use(helmet())
 
 // Mounte routes
 mountRoutes(app)
@@ -88,19 +113,19 @@ app.use(globalError)
 const port = process.env.port || 3000
 
 const server = app.listen(port, () => {
-    console.log(`app listen on ${port} and run in ${process.env.NODE_ENV} environment`)
+
 })
 
 // you have an Events in Express to make handling for errors -> will return list -> will return callback function
 // inside on function have alot of events 
 // - unhandled for outside error express
 process.on("rejectionHandled", (error) => {
-    console.log(`RejectionHandled: ${error}`)
+
     process.exit(1)
 })
 
 process.on("unhandledRejection", (error) => {
-    console.log(`UnhandledRejection Error: ${error.name} | ${error.message}`)
+
     // this is mean will end all connection or any requests happend on server and after this will close the server
     server.close(() => {
         process.exit(1)

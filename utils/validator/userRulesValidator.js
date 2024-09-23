@@ -113,7 +113,6 @@ const updatePasswordValidator = [
             }
             // 2- compare current user enterd and current user in database
             const compareOldPassword = await bcryptjs.compare(value, user.password)
-            console.log(`this is user result -> ${user} && Compare old password value: is -> ${compareOldPassword}`)
             if (!compareOldPassword) {
                 throw new Error("Incorrect current password")
             }
@@ -153,7 +152,6 @@ const updateLoggedUserPasswordValidator = [
             }
             // 2- compare current user enterd and current user in database
             const compareOldPassword = await bcryptjs.compare(value, user.password)
-            console.log(`this is user result -> ${user} && Compare old password value: is -> ${compareOldPassword}`)
             if (!compareOldPassword) {
                 throw new Error("Incorrect current password")
             }

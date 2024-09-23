@@ -49,7 +49,6 @@ reviewsSchema.statics.calcAverageRatingsAndQuantity = async function (productId)
         },
 
     ])
-    // console.log(`this is result return after aggregation: ${JSON.stringify(result)}`)
     if (result.length > 0) {
         await productModel.findByIdAndUpdate(
             productId,
@@ -77,7 +76,6 @@ reviewsSchema.post('save', async function () {
 
 // this init we create it only for testing init from apiService
 // reviewsSchema.post('init', function () {
-//     console.log('init worked because we triggered it from apiService');
 // })
 
 reviewsSchema.post('deleteOne', async function () {

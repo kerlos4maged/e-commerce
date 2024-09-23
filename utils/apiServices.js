@@ -52,11 +52,9 @@ const getAllDocumentsService = (modelDoc, collectionName) => asynchandler(async 
 
     if (req.filterById) nestedRouteId = req.filterById
 
-    console.log(`this is message from apiService file and this is filterById value: ${JSON.stringify(nestedRouteId)}`)
 
     const docSize = await modelDoc.find(nestedRouteId).countDocuments()
 
-    // console.log(`this is message from apiService file and this is docSize value: ${modelDoc} & ${collectionName}`)
 
     const apiFeaturesObj = new ApiFeatures(modelDoc.find(nestedRouteId), req.query)
         .paginate(docSize)
@@ -99,11 +97,9 @@ const getSpecificDocumentService = (modelDoc, populateOption) =>
         let searchQuery = {}
 
         if (req.filterById) {
-            console.log('we moved to filterById condition return true')
             searchQuery = req.filterById
         }
         else {
-            console.log('we moved to else condition return false')
             searchQuery._id = req.params.id
         }
 
@@ -113,7 +109,6 @@ const getSpecificDocumentService = (modelDoc, populateOption) =>
             query = query.populate(populateOption)
         }
         const item = await query
-        // console.log(`item data is -> ${id.length}`)
 
         if (!item) {
             // res.status(404).json({ message: "Category Not Found" })

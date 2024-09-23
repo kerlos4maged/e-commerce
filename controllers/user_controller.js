@@ -114,8 +114,8 @@ const changeUserPassword = expressAsyncHandler(async (req, res, next) => {
 // public 
 
 const getLoggedUserData = expressAsyncHandler(async (req, res, next) => {
-    // console.log(`req.params.user value -> ${req.user._id}`)
-    console.log(`req.params.user value -> ${req.user._id}`)
+    // 
+
     req.params.id = req.user._id
     next()
 })
@@ -141,9 +141,6 @@ const updateLoggedUserPassword = expressAsyncHandler(async (req, res, next) => {
     // 2- generation new token to logout and login again 
     const token = generateToken(item._id)
 
-    // console.log(
-    //     `we create new token from user controller file ${token}`
-    // )
 
     res.status(201).json({ "Status": "Sucess", token, "user": item })
 })

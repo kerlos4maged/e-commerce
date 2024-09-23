@@ -34,9 +34,7 @@ const createProductValidator = [
         .custom((subcategoriesIds) =>
             subCategoryModel.find({ _id: { $exists: true, $in: subcategoriesIds } }).then(
                 (result) => {
-                    // console.log(`this is values before error: ${result.length < 1} && ${result.length} && ${subcategoriesIds.toArray().length}`)
                     if (result.length < 1) {
-                        console.log('we have an error in first custom subCategoryModel')
                         return Promise.reject(new Error(`Invalid subcategories Ids`));
                     }
                 }
@@ -45,7 +43,6 @@ const createProductValidator = [
         .custom((val, { req }) =>
             subCategoryModel.find({ category: req.body.category }).then(
                 (subcategories) => {
-                    console.log(`subcategories values is: ${subcategories}`)
                     const subCategoriesIdsInDB = [];
                     subcategories.forEach((subCategory) => {
                         subCategoriesIdsInDB.push(subCategory._id.toString());

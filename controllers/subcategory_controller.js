@@ -38,14 +38,14 @@ const setIdForGetSubCategory = (req, res, next) => {
 // this is nested route to set filterById field in request
 // GET: /api/v1/category/:categoryId
 const setReviewAndProductIdToSearch = (req, res, next) => {
-    console.log(`this is categoryId value: ${req.params.categoryId}`)
-    console.log(`this is subCategoryId value: ${req.params.id}`)
+
+
 
     let categoryIdValue = ''
     let subcategoryIdValue = ''
 
     if (req.params.categoryId) {
-        console.log(`in review controller check condition will pass`)
+
         categoryIdValue = req.params.categoryId
         subcategoryIdValue = req.params.id
         req.filterById = { category: categoryIdValue, _id: subcategoryIdValue }

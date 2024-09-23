@@ -110,11 +110,9 @@ const docItemMiddleware = (doc) => {
     if (doc.images) {
         const imagesList = []
         doc.images.forEach((image) => {
-            console.log(`Image from product model -> ${image}`)
             const imageUrl = `${process.env.BASE_URL}/prodact/${doc.category}/${image}`
             imagesList.push(imageUrl)
         })
-        console.log(`All of Images from product model -> ${imagesList}`)
         doc.images = imagesList
     }
 }

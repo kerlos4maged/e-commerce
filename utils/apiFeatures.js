@@ -19,7 +19,6 @@ class ApiFeatures {
         query = query.replace(/\b(gte|gt|lte|lt)\b/g, matchValue => `$${matchValue}`)
         // third -> convert it again to json object
         query = JSON.parse(query)
-        // console.log(queryString)
         this.buildQuery = this.buildQuery.find(query)
 
         return this
@@ -49,25 +48,19 @@ class ApiFeatures {
     }
 
     search(model) {
-        // console.log(`this is message from apiFeatures and this is value for model ${model}`)
         if (this.queryString.keywords) {
             let query = {}
             if (model === "Product") {
-                console.log(`we going to brand search and this is your query ${JSON.stringify(this.queryString.keywords)} `)
 
                 query.$or = [
                     { title: { $regex: this.queryString.keywords, $options: 'i' } },
                     { description: { $regex: this.queryString.keywords, $options: 'i' } }
                 ]
-                console.log(`this is value return from keywords ${JSON.stringify(query)}`)
             } else {
-                console.log(`we going to brand search and this is your query ${JSON.stringify(this.queryString.keywords)} `)
 
                 query = { name: { $regex: this.queryString.keywords, $options: 'i' } }
 
-                console.log(`this is value return from keywords ${JSON.stringify(query)}`)
             }
-            console.log(`this is message after everything ${JSON.stringify(this.queryString.keywords)} `)
             this.buildQuery = this.buildQuery.find(query)
         }
 
@@ -75,7 +68,6 @@ class ApiFeatures {
     }
 
     paginate(countDocuments) {
-        // console.log(`paginate ${countDocuments}`)
         
         const paginationObj = {}
 

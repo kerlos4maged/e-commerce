@@ -23,7 +23,6 @@ const createCouponeValidator = [
         .custom((value) => {
             const convertFromValueToDate = new Date(value)
             const dateAfterConvert = convertFromValueToDate.getTime()
-            console.log(`coupon expire date is: ${dateAfterConvert} && this is date now ${Date.now()}`)
             if (dateAfterConvert < Date.now()) {
                 return Promise.reject(Error('Coupon Expire Date cannot be in the past'))
             }
@@ -59,7 +58,6 @@ const updateCouponValidator = [
         .custom((value) => {
             const convertFromValueToDate = new Date(value)
             const dateAfterConvert = convertFromValueToDate.getTime()
-            console.log(`coupon expire date is: ${dateAfterConvert} && this is date now ${Date.now()}`)
             if (dateAfterConvert < Date.now()) {
                 return Promise.reject(Error('Coupon Expire Date cannot be in the past'))
             }

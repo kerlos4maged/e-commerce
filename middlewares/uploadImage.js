@@ -4,7 +4,6 @@ const ApiError = require('../utils/api_error');
 const multerCreateion = () => {
     const imageFilteration = function (req, file, cb) {
 
-        // console.log(`this is message from file name function on imageFilteration: ${JSON.stringify(file)}`)
         const fileExt = ['png', 'jpg', 'jpeg', 'gif', 'svg', 'webp', 'avif', 'apng']
 
         if (fileExt.includes(file.mimetype.split('/')[1])) {
@@ -39,7 +38,6 @@ module.exports = {
 //         cb(null, 'upload/category');  // upload destination path
 //     },
 //     filename: function (req, file, cb) {
-//         console.log(`this is message from file name function on storageValue: ${file.mimetype}`)
 //         cb(null, `${uuid()}-${Date.now()}.${file.mimetype.split('/')[1]}`);
 //     }
 // });

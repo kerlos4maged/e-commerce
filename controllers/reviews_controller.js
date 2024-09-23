@@ -19,14 +19,14 @@ const getReviewById = getSpecificDocumentService(reviewModle)
 // to set review and product id 
 // GET /api/v1/product/:product/review/reviewId
 const setReviewAndProductIdToSearch = (req, res, next) => {
-    console.log(`this is productId value: ${req.params.productId}`)
-    console.log(`this is reviewId value: ${req.params.id}`)
+
+
 
     let productIdValue = ''
     let reviewIdValue = ''
 
     if (req.params.productId) {
-        console.log(`in review controller check condition will pass`)
+
         productIdValue = req.params.productId
         reviewIdValue = req.params.id
         req.filterById = { product: productIdValue, _id: reviewIdValue }

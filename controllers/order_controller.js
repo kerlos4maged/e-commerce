@@ -61,7 +61,7 @@ const payCashOrderController = asyncHandler(async (req, res, next) => {
         totalOrderPrice: totalOrderPrice,
         shippingAddress: req.body.shippingAddress,
     })
-    console.log(order)
+
 
     // 4- after make the order complete check the quantity for the product and how much is sold 
     changeProductQunatityAfterCreateOrder(order, cart, req.params.id)
@@ -177,26 +177,20 @@ const createSessionUsingString = asyncHandler(
             message: 'Checkout session created',
             session,
         })
-        console.log(`end session creations successfully`)
+
     })
 
 
 const createOrderData = async (paymentIntent) => {
-    console.log('creating order data started...')
+
 
     const cartId = paymentIntent.client_reference_id;
     const orderPrice = paymentIntent.amount_total / 100;
     const cart = await cartModel.findById(cartId);
     const user = await userModel.findOne({ email: paymentIntent.customer_email });
 
-    console.log(
-        `
-        creating items for orders starting...,
-        cart: ${cart},
-        user: ${user},
-        orderPrice: ${orderPrice},
-        `
-    )
+
+
 
     // 3) Create order with default paymentMethodType card
     const order = await orderModel.create({
@@ -208,7 +202,7 @@ const createOrderData = async (paymentIntent) => {
         paidAt: Date.now()
     })
 
-    console.log('creating items for orders completed...')
+
 
     // 4) After creating order, decrement product quantity, increment product sold
     if (order) {
@@ -231,7 +225,7 @@ const createOrderData = async (paymentIntent) => {
         await cartDeleted.save();
     }
 
-    console.log('order created successfully...')
+
 
 }
 
@@ -246,31 +240,31 @@ const createOrderOnline = async (req, res) => {
         try {
             event = stripe.webhooks.constructEvent(req.body, sig, process.env.stripe_web_hook_key);
         } catch (err) {
-            console.log('Webhook signature verification failed:', err.message);
+
             return res.status(400).send(`Webhook Error: ${err.message}`);
         }
     } else {
         // Skip signature verification for Postman testing
-        console.log('Skipping signature verification for testing');
-        console.log(`this is request body value: ${req.body}`)
+
+
         event = req.body; // Directly using the body sent by Postman
     }
 
-    console.log(`we now moved after first checking & this is event type: ${event.type}`)
+
 
     // Handle the event
     if (event.type === 'checkout.session.completed') {
         const paymentIntent = event.data.object;
-        console.log('PaymentIntent was successful!');
+
         createOrderData(paymentIntent)
-        console.log('The End...')
+
         res.status(200).send({ success: true, message: "event type is checkout.session.completed" });
     } else {
-        console.log('PaymentIntent was successful! from else');
+
         res.status(200).send({ success: true, message: "event type not checkout.session.completed" });
 
     }
-    console.log('event not going to if or else')
+
 };
 
 module.exports = {

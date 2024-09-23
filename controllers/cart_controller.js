@@ -62,7 +62,7 @@ const addProductToCart = asyncHandler(
                 total: productPrice.price,
             })
             // await cart.save()
-            console.log(`in cart controller we moved all steps and valid now`)
+
         } else {
             // if cart found this is mean the user has already cart in two cases
 
@@ -71,7 +71,7 @@ const addProductToCart = asyncHandler(
                 item => item.product.toString() === productId.toString()
                     && item.colors.toString() === color
             )
-            console.log(`this is value return from productIndex: ${productIndex}`)
+
             if (productIndex > -1) {
                 const cartItemIndex = cart.products[productIndex]
 
@@ -181,17 +181,17 @@ const updateCartItemQuantity = asyncHandler(async (req, res, next) => {
     if (!cartItem) {
         return next(new ApiError('Cart not found', 404))
     }
-    console.log(`cartItem is: ${cartItem}`)
+
     const productIndex = cartItem.products.findIndex(product => product._id.toString() === req.params.cartItemId)
     if (productIndex === -1) {
         return next(new ApiError('Product not found in cart', 404))
     }
-    console.log(`productIndex is: ${productIndex}`)
+
     const product = await productModel.findById(cartItem.products[productIndex].product)
     if (!product) {
         return next(new ApiError('Product not found', 404))
     }
-    console.log(`product is: ${product}`)
+
     if (req.body.quantity > product.quantity) {
         return next(new ApiError('Quantity exceeds product quantity', 400))
     }
@@ -222,7 +222,7 @@ const applyCopounOnCart = asyncHandler(async (req, res, next) => {
     }
 
     // const couponDateToMillis = coupon.expire.getTime()
-    // console.log(`this is coupon Date expiration: ${couponDateToMillis}`)
+    // 
     // if (Date.now() > couponDateToMillis) {
     //     return next(new ApiError('Coupon expired', 400))
     // }

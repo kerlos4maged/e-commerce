@@ -18,8 +18,6 @@ const deleteBrand = apiService.deleteService(brandModel)
 const uploadBrandImage = uploadSingleImage("image")
 
 const resizeBrandImage = expressAsyncHandler(async (req, res, next) => {
-    console.log(req.files)
-    console.log(req.body)
 
     const fileName = `brand-${req.body.name}-${uuid()}-${Date.now()}.jpeg`
 

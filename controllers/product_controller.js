@@ -31,17 +31,17 @@ const resizeBrandImage = expressAsyncHandler(async (req, res, next) => {
         // Check if the directory exists
         if (!fs.existsSync(folderName)) {
             fs.mkdirSync(folderName, { recursive: true });
-            console.log(`Directory created: ${folderName} -> ${id}`);
+            // 
         } else {
             // const parts = folderName.split(' ');
             // const lastPart = parseInt(parts[1].match(/\d+/)[0], 10) + 1;
-            // console.log(`this is last part -> ${lastPart}`);
+            
             // folderName = `upload/prodact/${req.body.title}-${lastPart}`
             // fs.mkdirSync(folderName, { recursive: true });  // Recreate the directory if it already exists to avoid overwriting images
-            console.log(`Directory already exists: ${folderName}`);
+            // 
         }
 
-        console.log(`Folder name: ${folderName}`);
+        // 
 
         // Processing the cover image
         if (req.files.imageCover) {
@@ -72,7 +72,7 @@ const resizeBrandImage = expressAsyncHandler(async (req, res, next) => {
         }
 
     } catch (error) {
-        console.log(`Error occurred while processing: ${error}`);
+        // 
     }
 
     next()
