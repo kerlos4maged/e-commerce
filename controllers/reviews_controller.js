@@ -20,8 +20,6 @@ const getReviewById = getSpecificDocumentService(reviewModle)
 // GET /api/v1/product/:product/review/reviewId
 const setReviewAndProductIdToSearch = (req, res, next) => {
 
-
-
     let productIdValue = ''
     let reviewIdValue = ''
 
