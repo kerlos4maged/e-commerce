@@ -59,12 +59,14 @@ app.use(limit)
 
 // used sessions package for secure sessions and secure from scrf attacks.
 
-app.use(session({
-    secret: process.env.SESSION_SECRET,
-    resave: false,
-    saveUninitialized: false,
-    cookie: { secure: process.env.NODE_ENV === 'production' }
-}))
+app.use(
+    session({
+        secret: process.env.SESSION_SECRET,
+        resave: false,
+        saveUninitialized: false,
+        httpOnly: true,
+        cookie: { secure: process.env.NODE_ENV === 'production' }
+    }))
 
 // database connection
 mongoConnection()
