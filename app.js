@@ -65,7 +65,10 @@ app.use(
         resave: false,
         saveUninitialized: false,
         httpOnly: true,
-        cookie: { secure: process.env.NODE_ENV === 'production' }
+        cookie: {
+            secure: process.env.NODE_ENV === 'production',
+            maxAge: 60000
+        }
     }))
 
 // database connection
