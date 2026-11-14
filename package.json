@@ -10,7 +10,7 @@
     "start": "node app.js"
   },
   "engines": {
-    "node": "18.17.0"
+    "node": "26.17.0"
   },
   "keywords": [],
   "author": "",
